@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkinCoach</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+.app { max-width: 760px; margin: 0 auto; padding: 20px; }
+.card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  margin-bottom: 18px;
+}
+h1 { margin: 0 0 8px; font-size: 26px; }
+h2 { margin: 0 0 16px; font-size: 20px; }
+h3 { color: #0f766e; margin: 0 0 8px; font-size: 18px; }
+h4 { margin: 18px 0 8px; font-size: 15px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+.subtitle { color: #64748b; margin-bottom: 18px; }
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 36px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+.dropzone:hover { border-color: #14b8a6; background: #f0fdfa; }
+.dropzone p { margin: 6px 0; }
+.small { color: #94a3b8; font-size: 13px; }
+.hidden { display: none !important; }
+.preview-img {
+  max-height: 280px;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 14px;
+}
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary { background: #14b8a6; color: #fff; }
+.btn-primary:hover { background: #0d9488; }
+.btn-secondary { background: #f1f5f9; color: #1e293b; }
+.btn-secondary:hover { background: #e2e8f0; }
+.loading {
+  text-align: center;
+  color: #64748b;
+  padding: 30px;
+}
+.loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #14b8a6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+ul { padding-left: 20px; }
+li { margin-bottom: 8px; }
+.alert { padding: 14px; border-radius: 10px; }
+.alert-warn { background: #fff7ed; }
+.alert-error { background: #fef2f2; }
+.alert-info { background: #eff6ff; }
+.section { margin: 16px 0; }
+.section-title { font-weight: 700; color: #0f766e; margin-bottom: 6px; }
+.diagnosis-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 14px 0;
+}
+.diagnosis-name { font-size: 20px; font-weight: 700; color: #166534; }
+.probability { color: #0f766e; font-weight: 600; }
+.hypothesis {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.hypothesis:last-child { border-bottom: none; }
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  resize: vertical;
+}
+.final-text { white-space: pre-wrap; line-height: 1.6; }
+.ml-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  color: #64748b;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="card">
+    <h1>SkinCoach</h1>
+    <p class="subtitle">Загрузи фото кожи — получи точный анализ</p>
+
+    <div id="dropzone" class="dropzone">
+      <p>Нажми или перетащи фото</p>
+      <p class="small">JPEG, PNG</p>
+      <input type="file" id="file-input" accept="image/*" class="hidden">
+    </div>
+
+    <div id="preview-area" class="hidden" style="text-align:center;margin-top:16px">
+      <img id="preview-img" class="preview-img">
+      <button id="analyze-btn" class="btn btn-primary">Начать анализ</button>
+    </div>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Анализирую фото. Это может занять до 2-3 минут...</p>
+    </div>
+  </div>
+
+  <div id="results" class="card hidden">
+    <h2>Результат анализа</h2>
+    <div id="results-body"></div>
+  </div>
+
+  <div id="answers-section" class="card hidden">
+    <h2>Ответы на вопросы</h2>
+    <p class="subtitle">Чтобы составить точный план, ответь на вопросы одним сообщением</p>
+    <textarea id="answers-text" class="textarea" placeholder="Например: чешется, появилось 2 недели назад, пробовал крем с гидрокортизоном..."></textarea>
+    <button id="submit-answers" class="btn btn-primary" style="margin-top:12px">Получить план лечения</button>
+  </div>
+
+  <div id="final" class="card hidden">
+    <h2>Персональный план</h2>
+    <div id="final-body"></div>
+    <button id="new-btn" class="btn btn-secondary" style="margin-top:16px">Новое фото</button>
+  </div>
+
+</div>
+
+<script>
+var file = null;
+var lastAnalysis = null;
+
+function byId(id) { return document.getElementById(id); }
+function esc(t) {
+  if (typeof t !== 'string') return String(t);
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showUpload() {
+  file = null;
+  lastAnalysis = null;
+  byId('file-input').value = '';
+  byId('preview-area').classList.add('hidden');
+  byId('loading').classList.add('hidden');
+  byId('results').classList.add('hidden');
+  byId('answers-section').classList.add('hidden');
+  byId('final').classList.add('hidden');
+  byId('dropzone').classList.remove('hidden');
+}
+
+function handleFile(f) {
+  if (!f || !f.type.match(/image\//)) { alert('Выберите JPEG или PNG'); return; }
+  file = f;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    byId('preview-img').src = e.target.result;
+    byId('preview-area').classList.remove('hidden');
+    byId('dropzone').classList.add('hidden');
+  };
+  reader.readAsDataURL(f);
+}
+
+function startAnalysis() {
+  if (!file) return;
+  byId('preview-area').classList.add('hidden');
+  byId('loading').classList.remove('hidden');
+  byId('results').classList.add('hidden');
+  byId('answers-section').classList.add('hidden');
+  byId('final').classList.add('hidden');
+
+  var fd = new FormData();
+  fd.append('name', 'user');
+  fd.append('photo', file);
+
+  fetch('/api/analyze', { method: 'POST', body: fd })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      byId('loading').classList.add('hidden');
+      if (data.status === 'reshoot') {
+        byId('results').classList.remove('hidden');
+        byId('results-body').innerHTML = '<div class="alert alert-warn"><b>Фото не подходит</b><br>' + esc(data.message) + '</div>';
+        return;
+      }
+      lastAnalysis = data;
+      showResults(data);
+    })
+    .catch(function(err) {
+      byId('loading').classList.add('hidden');
+      byId('results').classList.remove('hidden');
+      byId('results-body').innerHTML = '<div class="alert alert-error">Ошибка: ' + esc(err.message) + '</div>';
+    });
+}
+
+function showResults(data) {
+  var html = '';
+
+  // Main diagnosis
+  var hyps = (data.reasoning && data.reasoning.hypotheses) ? data.reasoning.hypotheses : [];
+  var primary = (data.reasoning && data.reasoning.primary_diagnosis) ? data.reasoning.primary_diagnosis : '';
+
+  if (hyps.length > 0) {
+    html += '<div class="diagnosis-box">';
+    html += '<div class="section-title">Предварительный диагноз</div>';
+    html += '<div class="diagnosis-name">' + esc(hyps[0].diagnosis || primary || 'требуется уточнение') + '</div>';
+    if (hyps[0].probability) {
+      html += '<div class="probability">Уверенность: ' + esc(String(hyps[0].probability)) + '%</div>';
+    }
+    html += '</div>';
+  }
+
+  // Hypotheses
+  if (hyps.length > 1) {
+    html += '<h4>Дифференциальный диагноз</h4>';
+    hyps.forEach(function(h) {
+      html += '<div class="hypothesis"><span><b>' + esc(h.diagnosis || '?') + '</b></span><span class="probability">' + esc(String(h.probability || 0)) + '%</span></div>';
+    });
+  }
+
+  // Vision description
+  if (data.vision && data.vision.description) {
+    html += '<h4>Что видно на фото</h4>';
+    html += '<p>' + esc(data.vision.description) + '</p>';
+  }
+  if (data.vision && data.vision.findings && data.vision.findings.length > 0) {
+    html += '<ul>';
+    data.vision.findings.forEach(function(f) {
+      html += '<li>' + esc(typeof f === 'string' ? f : JSON.stringify(f)) + '</li>';
+    });
+    html += '</ul>';
+  }
+
+  // Intro
+  if (data.intro) {
+    html += '<h4>Анализ</h4>';
+    html += '<p>' + esc(data.intro) + '</p>';
+  }
+
+  // ML screening
+  if (data.ml && data.ml.diagnosis) {
+    html += '<div class="ml-box">';
+    html += '<b>ML-скрининг:</b> ' + esc(data.ml.diagnosis) + ' (' + Math.round((data.ml.confidence || 0) * 100) + '%)<br>';
+    html += 'Эта проверка ищет признаки меланомы/родинки. Основной диагноз выше поставлен врачебной ИИ-моделью.';
+    html += '</div>';
+  }
+
+  // Questions
+  var qs = data.questions || [];
+  if (qs.length > 0) {
+    html += '<h4>Уточняющие вопросы</h4><ol>';
+    qs.forEach(function(q) {
+      var txt = typeof q === 'string' ? q : (q.question || JSON.stringify(q));
+      html += '<li>' + esc(txt) + '</li>';
+    });
+    html += '</ol>';
+  }
+
+  byId('results-body').innerHTML = html;
+  byId('results').classList.remove('hidden');
+
+  if (qs.length > 0) {
+    byId('answers-section').classList.remove('hidden');
+  }
+}
+
+function submitAnswers() {
+  if (!lastAnalysis) return;
+  var answers = byId('answers-text').value.trim();
+  if (!answers) { alert('Напиши ответы'); return; }
+
+  byId('submit-answers').textContent = 'Генерирую план...';
+  byId('submit-answers').disabled = true;
+
+  fetch('/api/final', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      vision: lastAnalysis.vision,
+      reasoning: lastAnalysis.reasoning,
+      reasoner_b: lastAnalysis.reasoner_b,
+      answers: answers,
+      name: 'user'
+    })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      byId('submit-answers').textContent = 'Получить план лечения';
+      byId('submit-answers').disabled = false;
+      showFinal(data);
+    })
+    .catch(function(err) {
+      byId('submit-answers').textContent = 'Получить план лечения';
+      byId('submit-answers').disabled = false;
+      alert('Ошибка: ' + err.message);
+    });
+}
+
+function showFinal(data) {
+  var html = '';
+  if (data.triage && data.triage.risk_level) {
+    var colors = {green: '#16a34a', yellow: '#ca8a04', red: '#dc2626'};
+    html += '<div class="alert alert-info" style="border-left: 4px solid ' + (colors[data.triage.risk_level] || '#64748b') + '">';
+    html += '<b>Уровень риска:</b> ' + esc(data.triage.risk_level || '') + '<br>';
+    html += '<b>Срочность:</b> ' + esc(data.triage.urgency || '') + '</div>';
+  }
+
+  if (data.final_text) {
+    html += '<div class="final-text">' + esc(data.final_text).replace(/\n/g, '<br>') + '</div>';
+  } else if (data.recommendations) {
+    html += '<pre>' + esc(JSON.stringify(data.recommendations, null, 2)) + '</pre>';
+  }
+
+  byId('final-body').innerHTML = html;
+  byId('final').classList.remove('hidden');
+  byId('answers-section').classList.add('hidden');
+  byId('results').classList.add('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  byId('dropzone').addEventListener('click', function() { byId('file-input').click(); });
+
+  byId('dropzone').addEventListener('dragover', function(e) {
+    e.preventDefault();
+    byId('dropzone').style.borderColor = '#14b8a6';
+  });
+
+  byId('dropzone').addEventListener('dragleave', function() {
+    byId('dropzone').style.borderColor = '';
+  });
+
+  byId('dropzone').addEventListener('drop', function(e) {
+    e.preventDefault();
+    byId('dropzone').style.borderColor = '';
+    if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+  });
+
+  byId('file-input').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) handleFile(e.target.files[0]);
+  });
+
+  byId('analyze-btn').addEventListener('click', startAnalysis);
+  byId('submit-answers').addEventListener('click', submitAnswers);
+  byId('new-btn').addEventListener('click', showUpload);
+});
+</script>
+
+</body>
+</html>

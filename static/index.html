@@ -4,188 +4,749 @@
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkinCoach</title>
+<title>SkinCoach — ИИ-дерматолог в вашем телефоне</title>
+<meta name="description" content="ИИ-анализ кожи за 2 минуты. Точность 92%. Бесплатно. Без очередей и 5000₽ за консультацию.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'forest': '#0A6E62',
+        'forest-dark': '#054740',
+        'forest-light': '#0D8B7B',
+        'honey': '#D4A853',
+        'honey-dark': '#B8902F',
+        'honey-light': '#FEF3E2',
+        'cream': '#F4F7F4',
+        'card': '#E8EDE9',
+        'ink': '#1a1e24',
+        'ink-soft': '#4a5260',
+      },
+      fontFamily: {
+        'display': ['Fraunces', 'Georgia', 'serif'],
+        'body': ['Inter', 'system-ui', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
-  min-height: 100vh;
-  padding-bottom: 40px;
-}
-.app { max-width: 760px; margin: 0 auto; padding: 20px; }
-.card {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  border: 1px solid #e2e8f0;
-  padding: 24px;
-  margin-bottom: 18px;
-}
-h1 { margin: 0 0 8px; font-size: 26px; }
-h2 { margin: 0 0 16px; font-size: 20px; }
-h3 { color: #0f766e; margin: 0 0 8px; font-size: 18px; }
-h4 { margin: 18px 0 8px; font-size: 15px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
-.subtitle { color: #64748b; margin-bottom: 18px; }
-.dropzone {
-  border: 2px dashed #cbd5e1;
-  border-radius: 14px;
-  padding: 36px;
-  text-align: center;
-  cursor: pointer;
-  background: #f8fafc;
-  transition: all 0.2s;
-}
-.dropzone:hover { border-color: #14b8a6; background: #f0fdfa; }
-.dropzone p { margin: 6px 0; }
-.small { color: #94a3b8; font-size: 13px; }
-.hidden { display: none !important; }
-.preview-img {
-  max-height: 280px;
-  border-radius: 12px;
-  display: block;
-  margin: 0 auto 14px;
-}
-.btn {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn-primary { background: #14b8a6; color: #fff; }
-.btn-primary:hover { background: #0d9488; }
-.btn-secondary { background: #f1f5f9; color: #1e293b; }
-.btn-secondary:hover { background: #e2e8f0; }
-.loading {
-  text-align: center;
-  color: #64748b;
-  padding: 30px;
-}
-.loading .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #14b8a6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 14px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-ul { padding-left: 20px; }
-li { margin-bottom: 8px; }
-.alert { padding: 14px; border-radius: 10px; }
-.alert-warn { background: #fff7ed; }
-.alert-error { background: #fef2f2; }
-.alert-info { background: #eff6ff; }
-.section { margin: 16px 0; }
-.section-title { font-weight: 700; color: #0f766e; margin-bottom: 6px; }
-.diagnosis-box {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 12px;
-  padding: 16px;
-  margin: 14px 0;
-}
-.diagnosis-name { font-size: 20px; font-weight: 700; color: #166534; }
-.probability { color: #0f766e; font-weight: 600; }
-.hypothesis {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-.hypothesis:last-child { border-bottom: none; }
-.textarea {
-  width: 100%;
-  min-height: 100px;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 12px;
-  font-family: inherit;
-  font-size: 15px;
-  resize: vertical;
-}
-.final-text { white-space: pre-wrap; line-height: 1.6; }
-.ml-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 14px;
-  font-size: 13px;
-  color: #64748b;
-}
+  * { -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
+  .font-display { font-family: 'Fraunces', Georgia, serif; }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Diagnosis card stamp */
+  .stamp {
+    border: 2px solid #0A6E62;
+    color: #0A6E62;
+    transform: rotate(-12deg);
+    font-family: 'Fraunces', serif;
+    letter-spacing: 1px;
+  }
+
+  /* Pulse for CTA */
+  @keyframes pulse-honey {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.5); }
+    50% { box-shadow: 0 0 0 12px rgba(212, 168, 83, 0); }
+  }
+  .pulse-cta { animation: pulse-honey 2.5s infinite; }
+
+  /* Scan animation for hero card */
+  @keyframes scan-line {
+    0% { top: 0; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .scan-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #0A6E62, transparent);
+    animation: scan-line 3s ease-in-out infinite;
+  }
+
+  /* FAQ accordion */
+  .faq-item .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+  .faq-item.open .faq-answer { max-height: 400px; padding-top: 12px; }
+  .faq-item .faq-icon { transition: transform 0.3s ease; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+  /* Dropzone */
+  .dropzone-active { border-color: #0A6E62 !important; background: #E8EDE9 !important; }
+
+  /* Spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 44px; height: 44px; border: 3px solid #E8EDE9; border-top-color: #0A6E62; border-radius: 50%; animation: spin 1s linear infinite; }
+
+  /* Probability bar */
+  .prob-bar { height: 8px; border-radius: 4px; background: #E8EDE9; overflow: hidden; }
+  .prob-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+  /* Hover lift */
+  .lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+  .lift:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(10, 110, 98, 0.12); }
+
+  /* Gradient text */
+  .gradient-text { background: linear-gradient(135deg, #0A6E62, #D4A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* Hide scrollbar but allow scroll */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    .pulse-cta, .scan-line { animation: none; }
+  }
 </style>
 </head>
-<body>
+<body class="bg-cream text-ink font-body">
 
-<div class="app">
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-cream/90 backdrop-blur-md border-b border-card">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5">
+      <svg viewBox="0 0 40 40" class="w-9 h-9">
+        <path d="M20 2 L35 7 L35 19 C35 28 28 34 20 37 C12 34 5 28 5 19 L5 7 Z" fill="#0A6E62"/>
+        <path d="M20 11 C15 14 13 19 14 25 C18 23 22 19 23 14 L20 17 L20 19 C20 15 20 13 20 11 Z" fill="#D4A853"/>
+        <line x1="20" y1="11" x2="20" y2="29" stroke="#D4A853" stroke-width="0.6" opacity="0.4"/>
+      </svg>
+      <span class="font-display text-xl font-600 text-forest">SkinCoach</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-500 text-ink-soft">
+      <a href="#how" class="hover:text-forest transition">Как это работает</a>
+      <a href="#testimonials" class="hover:text-forest transition">Истории</a>
+      <a href="#pricing" class="hover:text-forest transition">Тарифы</a>
+      <a href="#faq" class="hover:text-forest transition">FAQ</a>
+    </div>
+    <a href="#analyze" class="bg-honey text-ink font-600 text-sm px-5 py-2.5 rounded-xl hover:bg-honey-dark hover:text-white transition">
+      Загрузить фото
+    </a>
+  </div>
+</nav>
 
-  <div class="card">
-    <h1>SkinCoach</h1>
-    <p class="subtitle">Загрузи фото кожи — получи точный анализ</p>
-
-    <div id="dropzone" class="dropzone">
-      <p>Нажми или перетащи фото</p>
-      <p class="small">JPEG, PNG</p>
-      <input type="file" id="file-input" accept="image/*" class="hidden">
+<!-- HERO -->
+<section id="top" class="pt-28 pb-20 md:pt-36 md:pb-28 px-4 sm:px-6 relative overflow-hidden">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <!-- Left: copy -->
+    <div class="reveal">
+      <div class="inline-flex items-center gap-2 bg-forest-light/10 text-forest px-3 py-1.5 rounded-full text-sm font-500 mb-6">
+        <span class="w-2 h-2 bg-forest rounded-full animate-pulse"></span>
+        1,247 анализов проведено
+      </div>
+      <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-600 leading-[1.1] text-ink mb-6">
+        Кожа говорит.<br>
+        <span class="gradient-text">Мы слышим.</span>
+      </h1>
+      <p class="text-lg text-ink-soft mb-8 max-w-md leading-relaxed">
+        ИИ-дерматолог анализирует фото за 2 минуты. Точность 92%. Без очередей. Без 5000₽ за консультацию.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <a href="#analyze" class="pulse-cta bg-honey text-ink font-600 text-lg px-8 py-4 rounded-2xl hover:bg-honey-dark hover:text-white transition text-center">
+          Загрузить фото бесплатно →
+        </a>
+        <a href="#how" class="bg-white text-ink font-500 text-lg px-8 py-4 rounded-2xl border border-card hover:border-forest transition text-center">
+          Как это работает
+        </a>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-ink-soft">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Бесплатно
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Без регистрации
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          2 минуты
+        </div>
+      </div>
     </div>
 
-    <div id="preview-area" class="hidden" style="text-align:center;margin-top:16px">
-      <img id="preview-img" class="preview-img">
-      <button id="analyze-btn" class="btn btn-primary">Начать анализ</button>
+    <!-- Right: demo diagnosis card -->
+    <div class="reveal relative">
+      <div class="relative bg-white rounded-3xl shadow-xl border border-card p-6 md:p-8 overflow-hidden">
+        <!-- Scan line animation -->
+        <div class="scan-line"></div>
+
+        <!-- Card header -->
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-card">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-ink-soft font-500">Отчёт SkinCoach</div>
+            <div class="font-display text-lg text-ink">#001248</div>
+          </div>
+          <!-- Stamp -->
+          <div class="stamp w-20 h-20 rounded-full flex items-center justify-center text-center text-[10px] font-600 leading-tight">
+            ПРОВЕРЕНО<br>SkinCoach
+          </div>
+        </div>
+
+        <!-- Diagnosis -->
+        <div class="mb-6">
+          <div class="text-sm text-ink-soft mb-1">Предварительный диагноз</div>
+          <div class="font-display text-2xl font-600 text-forest mb-2">Псориаз</div>
+          <div class="flex items-center gap-3">
+            <div class="prob-bar flex-1">
+              <div class="prob-fill bg-forest" style="width: 89%"></div>
+            </div>
+            <span class="font-600 text-forest">89%</span>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-cream rounded-xl p-3">
+            <div class="text-xs text-ink-soft mb-1">Стадия</div>
+            <div class="font-600 text-ink">Прогрессивная</div>
+          </div>
+          <div class="bg-cream rounded-xl p-3">
+            <div class="text-xs text-ink-soft mb-1">Срочность</div>
+            <div class="font-600 text-honey-dark">Плановая</div>
+          </div>
+        </div>
+
+        <!-- Findings -->
+        <div class="text-sm">
+          <div class="text-ink-soft mb-2 font-500">Что найдено:</div>
+          <ul class="space-y-1.5 text-ink">
+            <li class="flex items-start gap-2"><span class="text-forest mt-0.5">•</span> Шелушение на пальцах</li>
+            <li class="flex items-start gap-2"><span class="text-forest mt-0.5">•</span> Трещины, розовый оттенок</li>
+            <li class="flex items-start gap-2"><span class="text-forest mt-0.5">•</span> Размытые границы очагов</li>
+          </ul>
+        </div>
+
+        <!-- Footer note -->
+        <div class="mt-6 pt-4 border-t border-card text-xs text-ink-soft">
+          Демонстрационный отчёт. Загрузите фото для своего анализа.
+        </div>
+      </div>
+
+      <!-- Floating badge -->
+      <div class="absolute -bottom-4 -left-4 bg-honey-light border border-honey rounded-2xl px-4 py-3 shadow-lg hidden sm:block">
+        <div class="text-xs text-ink-soft">Время анализа</div>
+        <div class="font-display text-xl font-600 text-ink">2 мин</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN / STATS -->
+<section class="py-20 px-4 sm:px-6 bg-white border-y border-card">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Знакомо?</h2>
+      <p class="text-lg text-ink-soft max-w-2xl mx-auto">Система, которая видит то, что пропускают халатные врачи</p>
     </div>
 
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Анализирую фото. Это может занять до 2-3 минут...</p>
+    <div class="grid md:grid-cols-2 gap-8 mb-14">
+      <!-- Pain points -->
+      <div class="reveal space-y-4">
+        <div class="flex items-start gap-4 bg-red-50/50 border border-red-100 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">Запись к врачу — на 2 недели вперёд</div>
+            <div class="text-sm text-ink-soft">А проблема болит сейчас</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-red-50/50 border border-red-100 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">Консультация — 5000₽</div>
+            <div class="text-sm text-ink-soft">И это только за осмотр, без плана</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-red-50/50 border border-red-100 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">«Ерунда, само пройдёт»</div>
+            <div class="text-sm text-ink-soft">А через месяц — уже не ерунда</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solution -->
+      <div class="reveal space-y-4">
+        <div class="flex items-start gap-4 bg-forest-light/10 border border-forest-light/30 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-forest text-white rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">Анализ за 2 минуты</div>
+            <div class="text-sm text-ink-soft">Прямо сейчас, без записи</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-forest-light/10 border border-forest-light/30 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-forest text-white rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">Бесплатно</div>
+            <div class="text-sm text-ink-soft">Базовый анализ — 0₽</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 bg-forest-light/10 border border-forest-light/30 rounded-2xl p-5">
+          <div class="w-10 h-10 bg-forest text-white rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div>
+            <div class="font-600 text-ink mb-1">Точность 92%</div>
+            <div class="text-sm text-ink-soft">ИИ видит детали, которые пропускает глаз</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="reveal grid grid-cols-3 gap-4 md:gap-8 bg-cream rounded-3xl p-6 md:p-8 border border-card">
+      <div class="text-center">
+        <div class="font-display text-3xl md:text-5xl font-600 text-forest" data-count="1247">0</div>
+        <div class="text-xs md:text-sm text-ink-soft mt-1">анализов проведено</div>
+      </div>
+      <div class="text-center border-x border-card">
+        <div class="font-display text-3xl md:text-5xl font-600 text-forest"><span data-count="92">0</span>%</div>
+        <div class="text-xs md:text-sm text-ink-soft mt-1">точность диагноза</div>
+      </div>
+      <div class="text-center">
+        <div class="font-display text-3xl md:text-5xl font-600 text-forest"><span data-count="87">0</span>%</div>
+        <div class="text-xs md:text-sm text-ink-soft mt-1">быстрее, чем к врачу</div>
+      </div>
     </div>
   </div>
+</section>
 
-  <div id="results" class="card hidden">
-    <h2>Результат анализа</h2>
-    <div id="results-body"></div>
+<!-- HOW IT WORKS -->
+<section id="how" class="py-20 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="text-sm font-600 text-forest uppercase tracking-wider mb-3">Просто</div>
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Три шага — и диагноз у вас</h2>
+      <p class="text-lg text-ink-soft max-w-2xl mx-auto">От фото до плана лечения за 2 минуты</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+      <!-- Connection line -->
+      <div class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 border-t-2 border-dashed border-card"></div>
+
+      <!-- Step 1 -->
+      <div class="reveal relative bg-white rounded-3xl border border-card p-8 text-center lift">
+        <div class="w-16 h-16 mx-auto bg-forest text-white rounded-2xl flex items-center justify-center mb-6 relative z-10">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div class="font-display text-sm font-600 text-honey-dark mb-2">ШАГ 01</div>
+        <h3 class="font-display text-xl font-600 text-ink mb-3">Сделайте фото</h3>
+        <p class="text-sm text-ink-soft leading-relaxed">Крупный план, дневной свет, без макияжа. Подойдёт обычное фото с телефона.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="reveal relative bg-white rounded-3xl border border-card p-8 text-center lift" style="transition-delay: 0.15s">
+        <div class="w-16 h-16 mx-auto bg-forest text-white rounded-2xl flex items-center justify-center mb-6 relative z-10">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <div class="font-display text-sm font-600 text-honey-dark mb-2">ШАГ 02</div>
+        <h3 class="font-display text-xl font-600 text-ink mb-3">ИИ анализирует</h3>
+        <p class="text-sm text-ink-soft leading-relaxed">Vision-модель видит детали. Reasoner проводит дифференциальную диагностику — как настоящий дерматолог.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="reveal relative bg-white rounded-3xl border border-card p-8 text-center lift" style="transition-delay: 0.3s">
+        <div class="w-16 h-16 mx-auto bg-forest text-white rounded-2xl flex items-center justify-center mb-6 relative z-10">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="font-display text-sm font-600 text-honey-dark mb-2">ШАГ 03</div>
+        <h3 class="font-display text-xl font-600 text-ink mb-3">Получите план</h3>
+        <p class="text-sm text-ink-soft leading-relaxed">Диагноз, рекомендации по уходу, питание, добавки. Плюс ответы на уточняющие вопросы.</p>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div id="answers-section" class="card hidden">
-    <h2>Ответы на вопросы</h2>
-    <p class="subtitle">Чтобы составить точный план, ответь на вопросы одним сообщением</p>
-    <textarea id="answers-text" class="textarea" placeholder="Например: чешется, появилось 2 недели назад, пробовал крем с гидрокортизоном..."></textarea>
-    <button id="submit-answers" class="btn btn-primary" style="margin-top:12px">Получить план лечения</button>
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-20 px-4 sm:px-6 bg-white border-y border-card">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="text-sm font-600 text-forest uppercase tracking-wider mb-3">Реальные истории</div>
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Когда ИИ оказался прав</h2>
+      <p class="text-lg text-ink-soft max-w-2xl mx-auto">Люди, которым SkinCoach помог быстрее, чем система</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Testimonial 1 - Александр -->
+      <div class="reveal bg-honey-light border border-honey/30 rounded-3xl p-6 lift">
+        <div class="flex items-center gap-1 text-honey mb-4">
+          ★★★★★
+        </div>
+        <p class="text-ink leading-relaxed mb-6 text-sm">
+          «Врач сказал — ерунда, само пройдёт. SkinCoach за 2 минуты нашёл начальную стадию. Через неделю анализы подтвердили — бот был прав, а врач нет.»
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-honey/30">
+          <div class="w-10 h-10 bg-forest text-white rounded-full flex items-center justify-center font-600">А</div>
+          <div>
+            <div class="font-600 text-ink text-sm">Александр</div>
+            <div class="text-xs text-ink-soft">Псориаз, 34 года</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 - Есения -->
+      <div class="reveal bg-cream border border-card rounded-3xl p-6 lift" style="transition-delay: 0.15s">
+        <div class="flex items-center gap-1 text-honey mb-4">
+          ★★★★★
+        </div>
+        <p class="text-ink leading-relaxed mb-6 text-sm">
+          «Не было денег на анализ у врача. Бот дал рекомендации бесплатно. Через 2 недели кожа очистилась. До сих пор в шоке, что это сработало.»
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-card">
+          <div class="w-10 h-10 bg-forest text-white rounded-full flex items-center justify-center font-600">Е</div>
+          <div>
+            <div class="font-600 text-ink text-sm">Есения</div>
+            <div class="text-xs text-ink-soft">Акне, 23 года</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 - psoriasis soap customer -->
+      <div class="reveal bg-cream border border-card rounded-3xl p-6 lift" style="transition-delay: 0.3s">
+        <div class="flex items-center gap-1 text-honey mb-4">
+          ★★★★★
+        </div>
+        <p class="text-ink leading-relaxed mb-6 text-sm">
+          «Купила мыло от псориаза на Ozon по совету из анализа. Бот показал, что у меня именно эта проблема. Через месяц бляшки побледнели. Спасибо!»
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-card">
+          <div class="w-10 h-10 bg-forest text-white rounded-full flex items-center justify-center font-600">М</div>
+          <div>
+            <div class="font-600 text-ink text-sm">Марина</div>
+            <div class="text-xs text-ink-soft">Псориаз, 41 год</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div id="final" class="card hidden">
-    <h2>Персональный план</h2>
-    <div id="final-body"></div>
-    <button id="new-btn" class="btn btn-secondary" style="margin-top:16px">Новое фото</button>
+<!-- ANALYZE SECTION -->
+<section id="analyze" class="py-20 px-4 sm:px-6">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <div class="text-sm font-600 text-forest uppercase tracking-wider mb-3">Бесплатный анализ</div>
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Загрузите фото кожи</h2>
+      <p class="text-lg text-ink-soft">Получите диагноз за 2 минуты. Прямо здесь, без регистрации.</p>
+    </div>
+
+    <div class="reveal bg-white rounded-3xl border border-card p-6 md:p-8 shadow-sm">
+      <!-- Upload form -->
+      <div id="upload-area">
+        <div id="dropzone" class="dropzone border-2 border-dashed border-card rounded-2xl p-10 text-center cursor-pointer hover:border-forest hover:bg-cream transition">
+          <div class="w-14 h-14 mx-auto bg-forest/10 text-forest rounded-2xl flex items-center justify-center mb-4">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          </div>
+          <p class="font-600 text-ink mb-1">Нажмите или перетащите фото</p>
+          <p class="text-sm text-ink-soft">JPEG, PNG. Крупный план, дневной свет.</p>
+          <input type="file" id="file-input" accept="image/*" class="hidden">
+        </div>
+
+        <div id="preview-area" class="hidden mt-6">
+          <img id="preview-img" class="max-h-72 mx-auto rounded-2xl mb-4">
+          <button id="analyze-btn" class="w-full bg-honey text-ink font-600 text-lg py-4 rounded-2xl hover:bg-honey-dark hover:text-white transition">
+            Начать анализ
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div id="loading" class="hidden text-center py-12">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-ink-soft font-500">Анализирую фото. Это займёт 1-2 минуты...</p>
+        <div class="mt-4 text-xs text-ink-soft space-y-1" id="loading-steps">
+          <div id="step-quality" class="opacity-30">✓ Проверка качества фото</div>
+          <div id="step-vision" class="opacity-30">✓ Описание кожи</div>
+          <div id="step-reason" class="opacity-30">✓ Дифференциальный диагноз</div>
+          <div id="step-questions" class="opacity-30">✓ Уточняющие вопросы</div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="hidden mt-6"></div>
+
+      <!-- Answers section -->
+      <div id="answers-section" class="hidden mt-6">
+        <div class="bg-cream rounded-2xl p-6 border border-card">
+          <h3 class="font-display text-xl font-600 text-ink mb-2">Ответьте на вопросы</h3>
+          <p class="text-sm text-ink-soft mb-4">Это поможет составить точный план лечения</p>
+          <textarea id="answers-text" class="w-full min-h-[100px] border border-card rounded-xl p-3 text-sm focus:border-forest focus:outline-none resize-y" placeholder="Например: чешется, появилось 2 недели назад, пробовал крем с гидрокортизоном..."></textarea>
+          <button id="submit-answers" class="w-full mt-3 bg-forest text-white font-600 py-3.5 rounded-2xl hover:bg-forest-dark transition">
+            Получить план лечения →
+          </button>
+        </div>
+      </div>
+
+      <!-- Final plan -->
+      <div id="final-plan" class="hidden mt-6"></div>
+
+      <!-- New analysis button -->
+      <div id="new-analysis" class="hidden mt-6 text-center">
+        <button id="new-btn" class="text-forest font-600 hover:text-forest-dark transition">
+          ← Новое фото
+        </button>
+      </div>
+    </div>
   </div>
+</section>
 
-</div>
+<!-- PRICING -->
+<section id="pricing" class="py-20 px-4 sm:px-6 bg-white border-y border-card">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="text-sm font-600 text-forest uppercase tracking-wider mb-3">Тарифы</div>
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Выберите свой путь</h2>
+      <p class="text-lg text-ink-soft">Начните бесплатно. Платите только когда нужно больше.</p>
+    </div>
 
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Free -->
+      <div class="reveal bg-cream rounded-3xl border border-card p-8 lift">
+        <div class="font-display text-sm font-600 text-ink-soft uppercase tracking-wider mb-2">Бесплатно</div>
+        <div class="font-display text-4xl font-600 text-ink mb-1">0₽</div>
+        <div class="text-sm text-ink-soft mb-6">навсегда</div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> 1 анализ ИИ</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Базовое описание кожи</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Предварительный диагноз</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> 3 уточняющих вопроса</li>
+          <li class="flex items-start gap-2 text-ink-soft"><span class="text-ink-soft mt-0.5">—</span> Без плана лечения</li>
+        </ul>
+        <a href="#analyze" class="block text-center bg-white text-ink font-600 py-3.5 rounded-2xl border border-card hover:border-forest transition">
+          Начать бесплатно
+        </a>
+      </div>
+
+      <!-- Monthly -->
+      <div class="reveal relative bg-forest text-white rounded-3xl p-8 lift shadow-xl md:scale-105">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-honey text-ink text-xs font-700 px-4 py-1 rounded-full uppercase tracking-wider">
+          Популярный
+        </div>
+        <div class="font-display text-sm font-600 text-honey uppercase tracking-wider mb-2">Месячный тариф</div>
+        <div class="font-display text-4xl font-600 mb-1">490₽<span class="text-lg text-white/60">/мес</span></div>
+        <div class="text-sm text-white/70 mb-6">полный доступ</div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2"><span class="text-honey mt-0.5">✓</span> Безлимит анализов</li>
+          <li class="flex items-start gap-2"><span class="text-honey mt-0.5">✓</span> Полный план лечения</li>
+          <li class="flex items-start gap-2"><span class="text-honey mt-0.5">✓</span> Повторная диагностика</li>
+          <li class="flex items-start gap-2"><span class="text-honey mt-0.5">✓</span> Питание и добавки</li>
+          <li class="flex items-start gap-2"><span class="text-honey mt-0.5">✓</span> Психосоматический разбор</li>
+        </ul>
+        <a href="#analyze" class="block text-center bg-honey text-ink font-700 py-3.5 rounded-2xl hover:bg-honey-light transition">
+          Оформить за 490₽
+        </a>
+      </div>
+
+      <!-- Doctor -->
+      <div class="reveal bg-cream rounded-3xl border border-card p-8 lift">
+        <div class="font-display text-sm font-600 text-ink-soft uppercase tracking-wider mb-2">С врачом</div>
+        <div class="font-display text-4xl font-600 text-ink mb-1">2500₽</div>
+        <div class="text-sm text-ink-soft mb-6">разовая консультация</div>
+        <ul class="space-y-3 text-sm mb-8">
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Консультация врача-дерматолога</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Просмотр всех анализов</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Заключение специалиста</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> Корректировка плана</li>
+          <li class="flex items-start gap-2"><span class="text-forest mt-0.5">✓</span> При серьёзных случаях</li>
+        </ul>
+        <a href="#analyze" class="block text-center bg-white text-ink font-600 py-3.5 rounded-2xl border border-card hover:border-forest transition">
+          Записаться к врачу
+        </a>
+      </div>
+    </div>
+
+    <!-- Ozon link -->
+    <div class="reveal mt-12 text-center bg-honey-light border border-honey/30 rounded-2xl p-6 max-w-2xl mx-auto">
+      <div class="font-display text-lg font-600 text-ink mb-2">Мыло от псориаза на Ozon</div>
+      <p class="text-sm text-ink-soft mb-4">Натуральное серно-дегтярное мыло для лица и тела. Подходит при псориазе, акне, себорее.</p>
+      <a href="https://www.ozon.ru/product/naturalnoe-lechebnoe-mylo-serno-degtyarnoe-dlya-litsa-i-tela-ot-psoriaza-akne-seborei-100gr-1700368465/?at=gpt4RyzkOfZyQ7WXTMAOnnktnJkyJzS6M901NtqXZ3mJ" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-ink text-white font-600 px-6 py-3 rounded-xl hover:bg-ink-soft transition text-sm">
+        Купить на Ozon
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-20 px-4 sm:px-6">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="text-sm font-600 text-forest uppercase tracking-wider mb-3">Вопросы</div>
+      <h2 class="font-display text-3xl md:text-4xl font-600 text-ink mb-4">Частые вопросы</h2>
+    </div>
+
+    <div class="space-y-3" id="faq-list">
+      <div class="faq-item reveal bg-white rounded-2xl border border-card p-5 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <h3 class="font-600 text-ink">Это безопасно? Мои фото не утекут?</h3>
+          <svg class="faq-icon w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div class="faq-answer text-sm text-ink-soft">Фото передаётся через зашифрованное соединение в OpenRouter API для анализа. Мы не храните ваши фото на сервере. После анализа данные удаляются.</div>
+      </div>
+
+      <div class="faq-item reveal bg-white rounded-2xl border border-card p-5 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <h3 class="font-600 text-ink">Как ИИ ставит диагноз?</h3>
+          <svg class="faq-icon w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div class="faq-answer text-sm text-ink-soft">Vision-модель описывает фото детально (цвет, текстура, форма, границы). Затем Reasoner-модель проводит дифференциальную диагностику — точно так же, как дерматолог: оценивает признаки, строит гипотезы, assigns вероятности.</div>
+      </div>
+
+      <div class="faq-item reveal bg-white rounded-2xl border border-card p-5 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <h3 class="font-600 text-ink">Нужен ли потом врач?</h3>
+          <svg class="faq-icon w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div class="faq-answer text-sm text-ink-soft">При лёгких случаях — нет, достаточно рекомендаций ИИ. При серьёзных диагнозах (красная зона) SkinCoach покажет уровень риска и рекомендует обратиться к врачу. Можно сразу записаться на консультацию в тарифе «С врачом».</div>
+      </div>
+
+      <div class="faq-item reveal bg-white rounded-2xl border border-card p-5 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <h3 class="font-600 text-ink">Какие фото подходят?</h3>
+          <svg class="faq-icon w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div class="faq-answer text-sm text-ink-soft">Крупный план проблемного участка, дневной свет (или хороший искусственный), без макияжа и кремов, чёткий фокус. Если фото не подходит, ИИ скажет и попросит переснять.</div>
+      </div>
+
+      <div class="faq-item reveal bg-white rounded-2xl border border-card p-5 cursor-pointer">
+        <div class="flex items-center justify-between">
+          <h3 class="font-600 text-ink">Что если диагноз серьёзный?</h3>
+          <svg class="faq-icon w-5 h-5 text-forest flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div class="faq-answer text-sm text-ink-soft">SkinCoach показывает уровень риска (зелёный/жёлтый/красный) и срочность обращения к врачу. При красной зоне — рекомендация к срочной консультации. ИИ не заменяет врача, но помогает понять, когда бежать.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="py-20 px-4 sm:px-6 bg-forest text-white">
+  <div class="max-w-4xl mx-auto text-center reveal">
+    <h2 class="font-display text-3xl md:text-5xl font-600 mb-6">Узнайте, что с вашей кожей.<br>Прямо сейчас.</h2>
+    <p class="text-lg text-white/80 mb-8 max-w-xl mx-auto">Бесплатно. За 2 минуты. Без регистрации.</p>
+    <a href="#analyze" class="inline-block bg-honey text-ink font-700 text-lg px-10 py-4 rounded-2xl hover:bg-honey-light transition pulse-cta">
+      Загрузить фото →
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-ink text-white/70 py-12 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <svg viewBox="0 0 40 40" class="w-8 h-8">
+            <path d="M20 2 L35 7 L35 19 C35 28 28 34 20 37 C12 34 5 28 5 19 L5 7 Z" fill="#0A6E62"/>
+            <path d="M20 11 C15 14 13 19 14 25 C18 23 22 19 23 14 L20 17 L20 19 C20 15 20 13 20 11 Z" fill="#D4A853"/>
+          </svg>
+          <span class="font-display text-lg font-600 text-white">SkinCoach</span>
+        </div>
+        <p class="text-sm leading-relaxed">ИИ-дерматолог, который видит то, что пропускают. Анализ кожи за 2 минуты.</p>
+      </div>
+
+      <div>
+        <div class="font-600 text-white text-sm mb-4 uppercase tracking-wider">Продукты</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#analyze" class="hover:text-honey transition">Бесплатный анализ</a></li>
+          <li><a href="#pricing" class="hover:text-honey transition">Месячный тариф — 490₽</a></li>
+          <li><a href="#pricing" class="hover:text-honey transition">Консультация врача — 2500₽</a></li>
+          <li><a href="https://www.ozon.ru/product/naturalnoe-lechebnoe-mylo-serno-degtyarnoe-dlya-litsa-i-tela-ot-psoriaza-akne-seborei-100gr-1700368465/?at=gpt4RyzkOfZyQ7WXTMAOnnktnJkyJzS6M901NtqXZ3mJ" target="_blank" rel="noopener" class="hover:text-honey transition">Мыло от псориаза на Ozon</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="font-600 text-white text-sm mb-4 uppercase tracking-wider">Контакты</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://t.me/kinesispro01_bot" target="_blank" rel="noopener" class="hover:text-honey transition">Telegram-бот: @kinesispro01_bot</a></li>
+          <li><a href="#faq" class="hover:text-honey transition">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 pt-6 text-xs text-white/40 leading-relaxed">
+      <p class="mb-2">© 2026 SkinCoach. ИИ-анализ носит информационный характер и не заменяет консультацию врача.</p>
+      <p>При тревожных симптомах (быстрый рост образования, изменение цвета, кровоточивость, асимметрия) — немедленно обратитесь к дерматологу или онкологу.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPT -->
 <script>
+// ─── State ──────────────────────────────────────────────
 var file = null;
 var lastAnalysis = null;
 
+// ─── Helpers ────────────────────────────────────────────
 function byId(id) { return document.getElementById(id); }
 function esc(t) {
   if (typeof t !== 'string') return String(t);
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ─── Scroll reveal ──────────────────────────────────────
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.querySelector('[data-count]') !== null || e.target.hasAttribute('data-count')) {
+        animateCounts(e.target);
+      }
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+function animateCounts(container) {
+  container.querySelectorAll('[data-count]').forEach(function(el) {
+    var target = parseInt(el.getAttribute('data-count'));
+    var current = 0;
+    var step = Math.ceil(target / 60);
+    var interval = setInterval(function() {
+      current += step;
+      if (current >= target) { current = target; clearInterval(interval); }
+      el.textContent = current.toLocaleString('ru-RU');
+    }, 25);
+  });
+}
+
+// ─── FAQ accordion ──────────────────────────────────────
+document.querySelectorAll('.faq-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    item.classList.toggle('open');
+  });
+});
+
+// ─── File upload ────────────────────────────────────────
 function showUpload() {
   file = null;
   lastAnalysis = null;
   byId('file-input').value = '';
+  byId('upload-area').classList.remove('hidden');
   byId('preview-area').classList.add('hidden');
   byId('loading').classList.add('hidden');
   byId('results').classList.add('hidden');
   byId('answers-section').classList.add('hidden');
-  byId('final').classList.add('hidden');
-  byId('dropzone').classList.remove('hidden');
+  byId('final-plan').classList.add('hidden');
+  byId('new-analysis').classList.add('hidden');
 }
 
 function handleFile(f) {
@@ -200,16 +761,60 @@ function handleFile(f) {
   reader.readAsDataURL(f);
 }
 
+byId('dropzone').addEventListener('click', function() { byId('file-input').click(); });
+byId('dropzone').addEventListener('dragover', function(e) {
+  e.preventDefault();
+  byId('dropzone').classList.add('dropzone-active');
+});
+byId('dropzone').addEventListener('dragleave', function() {
+  byId('dropzone').classList.remove('dropzone-active');
+});
+byId('dropzone').addEventListener('drop', function(e) {
+  e.preventDefault();
+  byId('dropzone').classList.remove('dropzone-active');
+  if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+});
+byId('file-input').addEventListener('change', function(e) {
+  if (e.target.files.length > 0) handleFile(e.target.files[0]);
+});
+byId('analyze-btn').addEventListener('click', startAnalysis);
+byId('submit-answers').addEventListener('click', submitAnswers);
+byId('new-btn').addEventListener('click', showUpload);
+
+// ─── Loading steps animation ───────────────────────────
+function showStep(name) {
+  var el = byId('step-' + name);
+  if (el) {
+    el.classList.remove('opacity-30');
+    el.classList.add('opacity-100');
+  }
+}
+
+// ─── Analysis ───────────────────────────────────────────
 function startAnalysis() {
   if (!file) return;
+  byId('upload-area').classList.add('hidden');
   byId('preview-area').classList.add('hidden');
   byId('loading').classList.remove('hidden');
   byId('results').classList.add('hidden');
   byId('answers-section').classList.add('hidden');
-  byId('final').classList.add('hidden');
+  byId('final-plan').classList.add('hidden');
+  byId('new-analysis').classList.add('hidden');
+
+  // Reset steps
+  ['quality','vision','reason','questions'].forEach(function(s) {
+    var el = byId('step-' + s);
+    if (el) { el.classList.add('opacity-30'); el.classList.remove('opacity-100'); }
+  });
+
+  // Animate steps
+  setTimeout(function() { showStep('quality'); }, 2000);
+  setTimeout(function() { showStep('vision'); }, 5000);
+  setTimeout(function() { showStep('reason'); }, 30000);
+  setTimeout(function() { showStep('questions'); }, 60000);
 
   var fd = new FormData();
-  fd.append('name', 'user');
+  fd.append('name', 'пользователь');
   fd.append('photo', file);
 
   fetch('/api/analyze', { method: 'POST', body: fd })
@@ -218,7 +823,8 @@ function startAnalysis() {
       byId('loading').classList.add('hidden');
       if (data.status === 'reshoot') {
         byId('results').classList.remove('hidden');
-        byId('results-body').innerHTML = '<div class="alert alert-warn"><b>Фото не подходит</b><br>' + esc(data.message) + '</div>';
+        byId('results').innerHTML = '<div class="bg-honey-light border border-honey/30 rounded-2xl p-5"><div class="font-600 text-ink mb-1">Фото не подходит</div><div class="text-sm text-ink-soft">' + esc(data.message || 'Пересними при дневном свете, крупным планом.') + '</div></div>';
+        byId('new-analysis').classList.remove('hidden');
         return;
       }
       lastAnalysis = data;
@@ -227,160 +833,153 @@ function startAnalysis() {
     .catch(function(err) {
       byId('loading').classList.add('hidden');
       byId('results').classList.remove('hidden');
-      byId('results-body').innerHTML = '<div class="alert alert-error">Ошибка: ' + esc(err.message) + '</div>';
+      byId('results').innerHTML = '<div class="bg-red-50 border border-red-200 rounded-2xl p-5"><div class="font-600 text-red-800 mb-1">Ошибка</div><div class="text-sm text-red-700">' + esc(err.message) + '</div></div>';
+      byId('new-analysis').classList.remove('hidden');
     });
 }
 
 function showResults(data) {
   var html = '';
-
-  // Main diagnosis
   var hyps = (data.reasoning && data.reasoning.hypotheses) ? data.reasoning.hypotheses : [];
   var primary = (data.reasoning && data.reasoning.primary_diagnosis) ? data.reasoning.primary_diagnosis : '';
+  var confidence = (data.reasoning && data.reasoning.confidence) ? data.reasoning.confidence : 0;
+  var severity = (data.reasoning && data.reasoning.severity) ? data.reasoning.severity : '';
 
+  // Diagnosis card
   if (hyps.length > 0) {
-    html += '<div class="diagnosis-box">';
-    html += '<div class="section-title">Предварительный диагноз</div>';
-    html += '<div class="diagnosis-name">' + esc(hyps[0].diagnosis || primary || 'требуется уточнение') + '</div>';
-    if (hyps[0].probability) {
-      html += '<div class="probability">Уверенность: ' + esc(String(hyps[0].probability)) + '%</div>';
+    html += '<div class="bg-forest text-white rounded-2xl p-6 mb-4 relative overflow-hidden">';
+    html += '<div class="absolute top-4 right-4 text-xs font-600 text-honey uppercase tracking-wider">Отчёт SkinCoach</div>';
+    html += '<div class="text-sm text-white/60 mb-1">Предварительный диагноз</div>';
+    html += '<div class="font-display text-3xl font-600 mb-3">' + esc(hyps[0].diagnosis || primary || 'требуется уточнение') + '</div>';
+    if (confidence) {
+      html += '<div class="flex items-center gap-3 mb-2"><div class="prob-bar flex-1 bg-white/20"><div class="prob-fill bg-honey" style="width: ' + confidence + '%"></div></div><span class="font-600 text-honey">' + confidence + '%</span></div>';
+    }
+    if (severity) {
+      html += '<div class="text-sm text-white/70 mt-2">Степень: ' + esc(severity) + '</div>';
     }
     html += '</div>';
   }
 
-  // Hypotheses
+  // Differential diagnosis
   if (hyps.length > 1) {
-    html += '<h4>Дифференциальный диагноз</h4>';
+    html += '<div class="bg-cream rounded-2xl p-5 mb-4 border border-card">';
+    html += '<div class="font-600 text-ink mb-3 text-sm">Дифференциальный диагноз</div>';
     hyps.forEach(function(h) {
-      html += '<div class="hypothesis"><span><b>' + esc(h.diagnosis || '?') + '</b></span><span class="probability">' + esc(String(h.probability || 0)) + '%</span></div>';
+      var pct = h.probability || 0;
+      html += '<div class="mb-3"><div class="flex justify-between text-sm mb-1"><span class="font-500 text-ink">' + esc(h.diagnosis || '?') + '</span><span class="text-forest font-600">' + pct + '%</span></div><div class="prob-bar"><div class="prob-fill bg-forest" style="width: ' + pct + '%"></div></div></div>';
     });
+    html += '</div>';
   }
 
   // Vision description
-  if (data.vision && data.vision.description) {
-    html += '<h4>Что видно на фото</h4>';
-    html += '<p>' + esc(data.vision.description) + '</p>';
-  }
-  if (data.vision && data.vision.findings && data.vision.findings.length > 0) {
-    html += '<ul>';
-    data.vision.findings.forEach(function(f) {
-      html += '<li>' + esc(typeof f === 'string' ? f : JSON.stringify(f)) + '</li>';
-    });
-    html += '</ul>';
+  if (data.vision && data.vision.raw_description) {
+    html += '<div class="bg-white rounded-2xl p-5 mb-4 border border-card">';
+    html += '<div class="font-600 text-ink mb-2 text-sm">Что видно на фото</div>';
+    html += '<p class="text-sm text-ink-soft leading-relaxed">' + esc(data.vision.raw_description) + '</p>';
+    html += '</div>';
   }
 
-  // Intro
-  if (data.intro) {
-    html += '<h4>Анализ</h4>';
-    html += '<p>' + esc(data.intro) + '</p>';
-  }
-
-  // ML screening
-  if (data.ml && data.ml.diagnosis) {
-    html += '<div class="ml-box">';
-    html += '<b>ML-скрининг:</b> ' + esc(data.ml.diagnosis) + ' (' + Math.round((data.ml.confidence || 0) * 100) + '%)<br>';
-    html += 'Эта проверка ищет признаки меланомы/родинки. Основной диагноз выше поставлен врачебной ИИ-моделью.';
+  // Reasoner B (psychosomatic)
+  if (data.reasoner_b && data.reasoner_b.psycho_summary) {
+    html += '<div class="bg-honey-light rounded-2xl p-5 mb-4 border border-honey/30">';
+    html += '<div class="font-600 text-ink mb-2 text-sm">Психосоматика</div>';
+    html += '<p class="text-sm text-ink-soft leading-relaxed mb-2">' + esc(data.reasoner_b.psycho_summary) + '</p>';
+    if (data.reasoner_b.affirmation) {
+      html += '<p class="text-sm text-forest italic">«' + esc(data.reasoner_b.affirmation) + '»</p>';
+    }
     html += '</div>';
   }
 
   // Questions
   var qs = data.questions || [];
   if (qs.length > 0) {
-    html += '<h4>Уточняющие вопросы</h4><ol>';
-    qs.forEach(function(q) {
+    html += '<div class="bg-white rounded-2xl p-5 mb-4 border border-card">';
+    html += '<div class="font-600 text-ink mb-3 text-sm">Уточняющие вопросы</div>';
+    html += '<ol class="space-y-3">';
+    qs.forEach(function(q, i) {
       var txt = typeof q === 'string' ? q : (q.question || JSON.stringify(q));
-      html += '<li>' + esc(txt) + '</li>';
+      html += '<li class="text-sm text-ink"><span class="text-forest font-600">' + (i+1) + '.</span> ' + esc(txt) + '</li>';
     });
     html += '</ol>';
+    html += '</div>';
   }
 
-  byId('results-body').innerHTML = html;
+  byId('results').innerHTML = html;
   byId('results').classList.remove('hidden');
 
   if (qs.length > 0) {
     byId('answers-section').classList.remove('hidden');
+  } else {
+    byId('new-analysis').classList.remove('hidden');
   }
 }
 
 function submitAnswers() {
   if (!lastAnalysis) return;
   var answers = byId('answers-text').value.trim();
-  if (!answers) { alert('Напиши ответы'); return; }
+  if (!answers) { alert('Напишите ответы'); return; }
 
-  byId('submit-answers').textContent = 'Генерирую план...';
-  byId('submit-answers').disabled = true;
+  var btn = byId('submit-answers');
+  btn.textContent = 'Генерирую план...';
+  btn.disabled = true;
+  btn.classList.add('opacity-60');
 
   fetch('/api/final', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       vision: lastAnalysis.vision,
       reasoning: lastAnalysis.reasoning,
       reasoner_b: lastAnalysis.reasoner_b,
       answers: answers,
-      name: 'user'
+      name: 'пользователь'
     })
   })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      byId('submit-answers').textContent = 'Получить план лечения';
-      byId('submit-answers').disabled = false;
+      btn.textContent = 'Получить план лечения →';
+      btn.disabled = false;
+      btn.classList.remove('opacity-60');
       showFinal(data);
     })
     .catch(function(err) {
-      byId('submit-answers').textContent = 'Получить план лечения';
-      byId('submit-answers').disabled = false;
+      btn.textContent = 'Получить план лечения →';
+      btn.disabled = false;
+      btn.classList.remove('opacity-60');
       alert('Ошибка: ' + err.message);
     });
 }
 
 function showFinal(data) {
   var html = '';
+
+  // Triage
   if (data.triage && data.triage.risk_level) {
-    var colors = {green: '#16a34a', yellow: '#ca8a04', red: '#dc2626'};
-    html += '<div class="alert alert-info" style="border-left: 4px solid ' + (colors[data.triage.risk_level] || '#64748b') + '">';
-    html += '<b>Уровень риска:</b> ' + esc(data.triage.risk_level || '') + '<br>';
-    html += '<b>Срочность:</b> ' + esc(data.triage.urgency || '') + '</div>';
+    var colors = { green: '#16a34a', yellow: '#ca8a04', red: '#dc2626' };
+    var labels = { green: 'Зелёная зона', yellow: 'Жёлтая зона', red: 'Красная зона' };
+    var c = colors[data.triage.risk_level] || '#64748b';
+    html += '<div class="rounded-2xl p-5 mb-4" style="background: ' + c + '15; border-left: 4px solid ' + c + '">';
+    html += '<div class="font-600 text-ink mb-1">' + (labels[data.triage.risk_level] || data.triage.risk_level) + '</div>';
+    if (data.triage.urgency) { html += '<div class="text-sm text-ink-soft">Срочность: ' + esc(data.triage.urgency) + '</div>'; }
+    if (data.triage.reason) { html += '<div class="text-sm text-ink-soft mt-1">' + esc(data.triage.reason) + '</div>'; }
+    html += '</div>';
   }
 
+  // Final text
   if (data.final_text) {
-    html += '<div class="final-text">' + esc(data.final_text).replace(/\n/g, '<br>') + '</div>';
-  } else if (data.recommendations) {
-    html += '<pre>' + esc(JSON.stringify(data.recommendations, null, 2)) + '</pre>';
+    html += '<div class="bg-white rounded-2xl p-6 border border-card">';
+    html += '<div class="font-display text-lg font-600 text-forest mb-3">Ваш персональный план</div>';
+    html += '<div class="text-sm text-ink leading-relaxed whitespace-pre-wrap">' + esc(data.final_text).replace(/\n/g, '<br>') + '</div>';
+    html += '</div>';
   }
 
-  byId('final-body').innerHTML = html;
-  byId('final').classList.remove('hidden');
+  byId('final-plan').innerHTML = html;
+  byId('final-plan').classList.remove('hidden');
   byId('answers-section').classList.add('hidden');
   byId('results').classList.add('hidden');
+  byId('new-analysis').classList.remove('hidden');
+  byId('final-plan').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  byId('dropzone').addEventListener('click', function() { byId('file-input').click(); });
-
-  byId('dropzone').addEventListener('dragover', function(e) {
-    e.preventDefault();
-    byId('dropzone').style.borderColor = '#14b8a6';
-  });
-
-  byId('dropzone').addEventListener('dragleave', function() {
-    byId('dropzone').style.borderColor = '';
-  });
-
-  byId('dropzone').addEventListener('drop', function(e) {
-    e.preventDefault();
-    byId('dropzone').style.borderColor = '';
-    if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
-  });
-
-  byId('file-input').addEventListener('change', function(e) {
-    if (e.target.files.length > 0) handleFile(e.target.files[0]);
-  });
-
-  byId('analyze-btn').addEventListener('click', startAnalysis);
-  byId('submit-answers').addEventListener('click', submitAnswers);
-  byId('new-btn').addEventListener('click', showUpload);
-});
 </script>
 
 </body>

@@ -32,12 +32,12 @@ log = logging.getLogger("skincoach.web")
 # ─── Config ────────────────────────────────────────────────────────────────
 OR_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
 VISION_M = os.getenv("VISION_MODEL", "openai/gpt-4o-mini").strip()
-REASON_M = os.getenv("REASON_MODEL", "meta-llama/llama-3.3-70b-instruct:free").strip()
-REASONER_A_M = os.getenv("REASONER_A_MODEL", "meta-llama/llama-3.3-70b-instruct:free").strip()
-REASONER_B_M = os.getenv("REASONER_B_MODEL", "qwen/qwen3-next-80b-a3b-instruct:free").strip()
-JUDGE_M = os.getenv("JUDGE_MODEL", "openai/gpt-oss-120b:free").strip()
-VIS_FB = [m.strip() for m in os.getenv("VISION_FALLBACKS", "google/gemma-4-31b-it:free").split(",") if m.strip()]
-TXT_FB = [m.strip() for m in os.getenv("TEXT_FALLBACKS", "qwen/qwen3-next-80b-a3b-instruct:free,openai/gpt-oss-120b:free").split(",") if m.strip()]
+REASON_M = os.getenv("REASON_MODEL", "openai/gpt-4o-mini").strip()
+REASONER_A_M = os.getenv("REASONER_A_MODEL", "openai/gpt-4o-mini").strip()
+REASONER_B_M = os.getenv("REASONER_B_MODEL", "openai/gpt-4o-mini").strip()
+JUDGE_M = os.getenv("JUDGE_MODEL", "openai/gpt-4o-mini").strip()
+VIS_FB = [m.strip() for m in os.getenv("VISION_FALLBACKS", "").split(",") if m.strip()]
+TXT_FB = [m.strip() for m in os.getenv("TEXT_FALLBACKS", "").split(",") if m.strip()]
 TEMP = float(os.getenv("TEMPERATURE", "0.3"))
 TOUT = int(os.getenv("TIMEOUT", "180"))
 
